@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+        >
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com.authority.*"/>
+    <mvc:annotation-driven/>
+    <mvc:default-servlet-handler/>
+
+
+    <!--配置记录函数执行时间的AOP-->
+    <aop:config>
+        <aop:aspect id="controllerTimeRecordAspect" ref="timeRecordAspect">
+            <!--配置com.spring.service包下所有类或接口的所有方法-->
+            <aop:pointcut id="businessController"
+                          expression="execution(* com.authority.controller.*.*(..))" />
+            <!--  <aop:before pointcut-ref="businessController" method="doBefore"/>
+              <aop:after pointcut-ref="businessController" method="doAfter"/>-->
+            <aop:around pointcut-ref="businessController" method="doAround"/>
+          <!--  <aop:after-throwing pointcut-ref="businessController" method="doThrowing" throwing="ex"/>-->
+        </aop:aspect>
+    </aop:config>
+
+    <aop:config>
+        <aop:aspect id="serviceTimeRecordAspect" ref="timeRecordAspect">
+            <!--配置com.spring.service包下所有类或接口的所有方法-->
+            <aop:pointcut id="businessService"
+                          expression="execution(* com.authority.service.*.*(..))" />
+            <!--  <aop:before pointcut-ref="businessService" method="doBefore"/>
+              <aop:after pointcut-ref="businessService" method="doAfter"/>-->
+            <aop:around pointcut-ref="businessService" method="doAround"/>
+          <!--  <aop:after-throwing pointcut-ref="businessService" method="doThrowing" throwing="ex"/>-->
+        </aop:aspect>
+    </aop:config>
+
+    <bean id="timeRecordAspect" class="com.authority.tools.TimeRecordAspect" />
+</beans>
